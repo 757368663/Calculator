@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:fontFamily="sans-serif-black" android:state_pressed="true" >
+        <layer-list>
+            <item android:gravity="center" android:width="60dp" android:height="60dp">
+                <shape>
+                    <corners
+                        android:radius="300dp"/>
+                    <solid
+                        android:color="#E0E0E0"/>
+                    <size android:width="40dp" android:height="40dp"/>
+
+                </shape>
+
+            </item>
+        </layer-list>
+    </item>
+    <item   android:fontFamily="sans-serif-light" android:state_pressed="false">
+        <shape>
+            <solid
+                android:color="#ffffff"/>
+        </shape>
+    </item>
+</selector>
