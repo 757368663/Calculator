@@ -35,7 +35,7 @@ public class CalculatorFragment extends BaseFragment {
     private GridView gridView;
     private String[] dataArr;
     private TextView calculate,answer;
-    private List<String> data = new ArrayList<>();
+    private  final List<String> data = new ArrayList<>();
 
     SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
 
@@ -56,8 +56,11 @@ public class CalculatorFragment extends BaseFragment {
     void init() {
         //初始化控件
         calculate = getView().findViewById(R.id.calculator_calculate);
-        calculate = getView().findViewById(R.id.calculator_answer);
+        answer = getView().findViewById(R.id.calculator_answer);
+        calculate.setText("0");
+        answer.setVisibility(View.GONE);
         gridView = getView().findViewById(R.id.grid);
+
         gridView.setNumColumns(4);
         //获取数字
         dataArr = getResources().getStringArray(R.array.data);
@@ -140,7 +143,6 @@ public class CalculatorFragment extends BaseFragment {
                         break;
                 }
 //                Log.e("p", "onItemClick: "+textView.getText() );
-
                 //将上一个数字的字体变为原来的样子
                 TextView viewTxt = gridViewAdapter.getViewTxt();
                 if (viewTxt !=null){
@@ -152,7 +154,6 @@ public class CalculatorFragment extends BaseFragment {
                 gridViewAdapter.setTextViews(text);
 
                 //将数字算式显示在展示界面上
-
                 if (!number.equals("")){
                     switch (number){
                         case "-2":
@@ -164,26 +165,36 @@ public class CalculatorFragment extends BaseFragment {
                         case "AC":
                             spannableStringBuilder.delete(0,spannableStringBuilder.length());
                             break;
+                            //这里输出结果
                         default:
                             spannableStringBuilder.append(number);
+                            answer.setText("="+getCalculateNumber(spannableStringBuilder.toString()));
                             break;
                     }
                 }
                 calculate.setText(spannableStringBuilder);
 
-//                Log.e("tag", "onItemClick: " + calculate.getText().toString()+" ");
-                Log.e("tag", "onItemClick: " + gridViewAdapter.getAc().getText());
-                //每次点击最后判断屏幕上是否有算式来更新AC和C
+                //最后判断有没有算式来决定是ac还是c 以及 回到初始版面
                 if (spannableStringBuilder.length()==0){
-                    gridViewAdapter.getAc().setText("AC");
-                    Log.e("tag", "onItemClick: " + gridViewAdapter.getAc());
+                    data.remove(0);
+                    data.add(0,"AC");
+                    gridViewAdapter.notifyDataSetChanged();
+                    answer.setVisibility(View.GONE);
+                    calculate.setText("0");
                 }else if (spannableStringBuilder.length()==1){
-                    gridViewAdapter.getAc().setText("C");
-                    Log.e("tag", "onItemClick: " + gridViewAdapter.getAc().getText());
-                    Log.e("tag", "onItemClick: " + gridViewAdapter.getAc());
+                    data.remove(0);
+                    data.add(0,"C");
+                    gridViewAdapter.notifyDataSetChanged();
+                    answer.setVisibility(View.VISIBLE);
                 }
 
             }
         });
+    }
+
+    //计算的方法
+    String getCalculateNumber(String str){
+        String an = "";
+        return an;
     }
 }
