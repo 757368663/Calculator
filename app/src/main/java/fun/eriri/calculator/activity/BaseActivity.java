@@ -46,7 +46,6 @@ public class BaseActivity extends AppCompatActivity {
 
 
 
-        Log.e("YAG", "onCreate: "+ BaseActivity.height);
     }
 
     void init(){

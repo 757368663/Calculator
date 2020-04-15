@@ -8,6 +8,7 @@ import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.text.SpannableStringBuilder;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -20,14 +21,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import fun.eriri.calculator.R;
 import fun.eriri.calculator.TouchListner;
 import fun.eriri.calculator.adapter.GridViewAdapter;
-
-
+import fun.eriri.calculator.biz.Calculate;
+import fun.eriri.calculator.biz.Util;
 
 
 public class CalculatorFragment extends BaseFragment {
@@ -36,9 +38,13 @@ public class CalculatorFragment extends BaseFragment {
     private String[] dataArr;
     private TextView calculate,answer;
     private  final List<String> data = new ArrayList<>();
+    private boolean isAnswer = false;
 
     SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
+    Calculate calculateBiz = new Calculate();
 
+    Typeface thin = Typeface.create("sans-serif-thin",Typeface.NORMAL);
+    Typeface light = Typeface.create("sans-serif-light",Typeface.NORMAL);
 
     @Nullable
     @Override
@@ -67,8 +73,6 @@ public class CalculatorFragment extends BaseFragment {
         Collections.addAll(data, dataArr);
         //初始化适配器
         final GridViewAdapter gridViewAdapter = new GridViewAdapter(getContext(), data);
-//        gridView.setVerticalSpacing(100);
-//        gridView.setLongClickable(true);
         gridView.setAdapter(gridViewAdapter);
 
         //震动实现
@@ -94,56 +98,9 @@ public class CalculatorFragment extends BaseFragment {
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String number = "";
-                //将点击转换为实际数字
-//                Log.e("tag", "onItemClick: "+position );
-                if (position>=4&&position<=6){
-                    number = String.valueOf(position+3);
-                }else if (position>=8&&position<=10){
-                    number = String.valueOf(position-4);
-                } else if (position>=12&&position<=14) {
-                    number = String.valueOf(position-11);
-                }
-                //更改 AC：0
-                // x：1 ；
-                // %：2 ；
-                // ➗：3
-                // x ：7；
-                //-：11；
-                // + ：15；
-                //待：16；
-                // = ； 19；  等于号换橘色背景，白色字体
-                switch (position){
-                    case 0:
-                        number = "AC";
-                        break;
-                    case 1:
-                        number = "-2";
-                        break;
-                    case 2:
-                        number = "%";
-                        break;
-                    case 3:
-                        number = "÷";
-                        break;
-                    case 7:
-                        number = "x";
-                        break;
-                    case 11:
-                        number = "-";
-                        break;
-                    case 15:
-                        number = "+";
-                        break;
-                    case 16:
-                        number = "-3";
-                        break;
-                    case 19:
-                        number = "=";
-                        break;
-                }
-//                Log.e("p", "onItemClick: "+textView.getText() );
-                //将上一个数字的字体变为原来的样子
+                //获取数字
+                String number = Util.getNumber(position);
+                //将上一个数字的字体变为原来的字体
                 TextView viewTxt = gridViewAdapter.getViewTxt();
                 if (viewTxt !=null){
                     viewTxt.setTypeface(Typeface.DEFAULT);
@@ -165,10 +122,36 @@ public class CalculatorFragment extends BaseFragment {
                         case "AC":
                             spannableStringBuilder.delete(0,spannableStringBuilder.length());
                             break;
+                            //如果为等于则进行切换字体
+                        case "=":
+                            isAnswer = true;
+                            setType(isAnswer);
+                            break;
                             //这里输出结果
                         default:
+                            if (isAnswer){
+                                setType(false);
+                                spannableStringBuilder.delete(0,spannableStringBuilder.length());
+                                isAnswer = false;
+                            }
                             spannableStringBuilder.append(number);
-                            answer.setText("="+getCalculateNumber(spannableStringBuilder.toString()));
+                            if (Calculate.level.containsKey(number)){
+                                if (!number .equals("%")){
+                                    break;
+                                }
+
+                            }
+                            calculateBiz.setEquation(spannableStringBuilder.toString()+"#");
+                            String answerStr = null;
+                            try {
+                                answerStr = calculateBiz.getAnswer();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            if (answerStr!=null&&answerStr.endsWith(".0")){
+                                answerStr = answerStr.substring(0,answerStr.length()-2);
+                            }
+                            CalculatorFragment.this.answer.setText("="+answerStr);
                             break;
                     }
                 }
@@ -192,9 +175,27 @@ public class CalculatorFragment extends BaseFragment {
         });
     }
 
-    //计算的方法
-    String getCalculateNumber(String str){
-        String an = "";
-        return an;
+
+   //切换字体 ，  这里最后会使用动画代替
+    void setType(boolean IsAnswer){
+        if(IsAnswer){
+            answer.setTextSize(TypedValue.COMPLEX_UNIT_SP,50);
+            answer.setTypeface(light);
+            answer.setTextColor(getContext().getResources().getColor(R.color.blac));
+
+            calculate.setTextSize(TypedValue.COMPLEX_UNIT_SP,40);
+            calculate.setTypeface(thin);
+            calculate.setTextColor(getResources().getColor(R.color.grey));
+        }else{
+            answer.setTextSize(TypedValue.COMPLEX_UNIT_SP,40);
+            answer.setTypeface(thin);
+            answer.setTextColor(getContext().getResources().getColor(R.color.grey));
+
+            calculate.setTextSize(TypedValue.COMPLEX_UNIT_SP,50);
+            calculate.setTypeface(light);
+            calculate.setTextColor(getResources().getColor(R.color.blac));
+        }
+
     }
+
 }

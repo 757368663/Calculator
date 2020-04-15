@@ -114,12 +114,6 @@ public class GridViewAdapter extends BaseAdapter {
                 viewholder.textView.setTextColor(context.getResources().getColor(android.R.color.white));
                 viewholder.textView.setBackgroundResource(R.drawable.shape);
             }
-            if (getAc()!=null){
-                Log.e("ta", "onItemClick: " + getAc().getText());
-                Log.e("ta", "onItemClick: " + getAc());
-                Log.e("ta", "onItemClick: " + position);
-
-            }
         viewholder.textView.setText(data.get(position));
 
 

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Calculator</string>
+    <string name="app_name">计算器</string>
 
     <string-array name="data">
         <item>AC</item>
@@ -9,7 +9,7 @@
         <item>7</item>
         <item>8</item>
         <item>9</item>
-        <item>×</item>
+        <item>X</item>
         <item>4</item>
         <item>5</item>
         <item>6</item>
@@ -23,5 +23,8 @@
         <item>.</item>
         <item>＝</item>
     </string-array>
+    <string name="answer">
+        =%1s
+    </string>
 
 </resources>
