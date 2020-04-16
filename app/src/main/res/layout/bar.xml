@@ -15,15 +15,4 @@
         android:fontFamily="casual"
         android:textColor="#000000"
         android:text="计算"/>
-    <TextView
-        android:id="@+id/change"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:textSize="20dp"
-        android:fontFamily="casual"
-        android:textColor="#000000"
-        android:text="换算"/>
-
 </LinearLayout>
