@@ -41,6 +41,9 @@ public class CalculatorFragment extends BaseFragment {
     private  final List<String> data = new ArrayList<>();
     private boolean isAnswer = false;
 
+    boolean isSmall = false;
+
+
     SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
     Calculate calculateBiz = new Calculate();
 
@@ -110,6 +113,9 @@ public class CalculatorFragment extends BaseFragment {
                 if (!number.equals("")){
                     switch (number){
                         case "-2":
+                            if (spannableStringBuilder.length() == 10){
+                                beBig();
+                            }
                             if (spannableStringBuilder.length()!=0){
                                 spannableStringBuilder.
                                         delete(spannableStringBuilder.length()-1,spannableStringBuilder.length());
@@ -153,7 +159,10 @@ public class CalculatorFragment extends BaseFragment {
                             break;
                     }
                 }
+
                 calculate.setText(spannableStringBuilder);
+
+
 
                 //最后判断有没有算式来决定是ac还是c 以及 回到初始版面
                 if (spannableStringBuilder.length()==0){
@@ -168,17 +177,28 @@ public class CalculatorFragment extends BaseFragment {
                     data.add(0,"C");
                     gridViewAdapter.notifyDataSetChanged();
                     answer.setVisibility(View.VISIBLE);
+                }else if(spannableStringBuilder.length() == 10) {     //这里判断如果数字过多的操作；
+                    beSmall();
                 }
+
 
             }
         });
     }
 
 
+    //将算式缩小
+    void beSmall(){
+        ObjectAnimator.ofInt(calculate, "animation", 10,0).setDuration(200).start();
+    }
+    void beBig(){
+        ObjectAnimator.ofInt(calculate, "animation", 0,10).setDuration(200).start();
+    }
    //切换字体
     void setType(boolean IsAnswer){
         if (IsAnswer){
             ObjectAnimator animator = ObjectAnimator.ofInt(answer, "animation", 0,10);
+            //此处，如果现在处于小字状态，点击等于会导致放大再缩小，应该修改
             ObjectAnimator animator1 = ObjectAnimator.ofInt(calculate, "animation", 10,0);
 
             calculate.setTypeface(MyTextView.thin);

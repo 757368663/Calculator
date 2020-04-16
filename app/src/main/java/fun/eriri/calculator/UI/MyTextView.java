@@ -37,6 +37,7 @@ public class MyTextView extends TextView {
     }
 
     public void setAnimation(int  isThin){
+        if (getText().length() <= 10)
         setTextSize(TypedValue.COMPLEX_UNIT_SP,40+isThin);
     }
 
