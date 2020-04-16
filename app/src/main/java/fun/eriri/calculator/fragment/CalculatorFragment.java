@@ -130,6 +130,8 @@ public class CalculatorFragment extends BaseFragment {
                             isAnswer = true;
                             setType(isAnswer);
                             break;
+                        case "-3":
+                            break;
                             //这里输出结果
                         default:
                             if (isAnswer){
