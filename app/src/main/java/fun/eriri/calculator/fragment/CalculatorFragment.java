@@ -1,18 +1,19 @@
 package fun.eriri.calculator.fragment;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.Typeface;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.text.SpannableStringBuilder;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.LinearInterpolator;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.TextView;
@@ -21,12 +22,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import fun.eriri.calculator.R;
 import fun.eriri.calculator.TouchListner;
+import fun.eriri.calculator.UI.MyTextView;
 import fun.eriri.calculator.adapter.GridViewAdapter;
 import fun.eriri.calculator.biz.Calculate;
 import fun.eriri.calculator.biz.Util;
@@ -36,15 +37,15 @@ public class CalculatorFragment extends BaseFragment {
 
     private GridView gridView;
     private String[] dataArr;
-    private TextView calculate,answer;
+    private MyTextView calculate,answer;
     private  final List<String> data = new ArrayList<>();
     private boolean isAnswer = false;
 
     SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
     Calculate calculateBiz = new Calculate();
 
-    Typeface thin = Typeface.create("sans-serif-thin",Typeface.NORMAL);
-    Typeface light = Typeface.create("sans-serif-light",Typeface.NORMAL);
+
+
 
     @Nullable
     @Override
@@ -100,15 +101,10 @@ public class CalculatorFragment extends BaseFragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //获取数字
                 String number = Util.getNumber(position);
-                //将上一个数字的字体变为原来的字体
-                TextView viewTxt = gridViewAdapter.getViewTxt();
-                if (viewTxt !=null){
-                    viewTxt.setTypeface(Typeface.DEFAULT);
-                }
-                //当点击时将数字加粗
-                TextView text = (TextView) view;
-                text.setTypeface(Typeface.DEFAULT_BOLD);
-                gridViewAdapter.setTextViews(text);
+                //字体被点击时产生动画
+                MyTextView text = (MyTextView) view;
+
+               ObjectAnimator.ofInt(text, "font", 0,1,0).setDuration(200).start();
 
                 //将数字算式显示在展示界面上
                 if (!number.equals("")){
@@ -121,6 +117,7 @@ public class CalculatorFragment extends BaseFragment {
                             break;
                         case "AC":
                             spannableStringBuilder.delete(0,spannableStringBuilder.length());
+                            isAnswer = false;
                             break;
                             //如果为等于则进行切换字体
                         case "=":
@@ -130,12 +127,13 @@ public class CalculatorFragment extends BaseFragment {
                             //这里输出结果
                         default:
                             if (isAnswer){
-                                setType(false);
                                 spannableStringBuilder.delete(0,spannableStringBuilder.length());
                                 isAnswer = false;
+                                setType(isAnswer);
+                                answer.setVisibility(View.GONE);
                             }
                             spannableStringBuilder.append(number);
-                            if (Calculate.level.containsKey(number)){
+                            if (Calculate.level.containsKey(number)&&spannableStringBuilder.length()!=1){
                                 if (!number .equals("%")){
                                     break;
                                 }
@@ -164,6 +162,7 @@ public class CalculatorFragment extends BaseFragment {
                     gridViewAdapter.notifyDataSetChanged();
                     answer.setVisibility(View.GONE);
                     calculate.setText("0");
+                    setType(isAnswer);
                 }else if (spannableStringBuilder.length()==1){
                     data.remove(0);
                     data.add(0,"C");
@@ -176,25 +175,31 @@ public class CalculatorFragment extends BaseFragment {
     }
 
 
-   //切换字体 ，  这里最后会使用动画代替
+   //切换字体
     void setType(boolean IsAnswer){
-        if(IsAnswer){
-            answer.setTextSize(TypedValue.COMPLEX_UNIT_SP,50);
-            answer.setTypeface(light);
-            answer.setTextColor(getContext().getResources().getColor(R.color.blac));
+        if (IsAnswer){
+            ObjectAnimator animator = ObjectAnimator.ofInt(answer, "animation", 0,10);
+            ObjectAnimator animator1 = ObjectAnimator.ofInt(calculate, "animation", 10,0);
 
-            calculate.setTextSize(TypedValue.COMPLEX_UNIT_SP,40);
-            calculate.setTypeface(thin);
+            calculate.setTypeface(MyTextView.thin);
             calculate.setTextColor(getResources().getColor(R.color.grey));
-        }else{
-            answer.setTextSize(TypedValue.COMPLEX_UNIT_SP,40);
-            answer.setTypeface(thin);
-            answer.setTextColor(getContext().getResources().getColor(R.color.grey));
 
+            answer.setTypeface(MyTextView.light);
+            answer.setTextColor(getResources().getColor(R.color.blac));
+
+            AnimatorSet animatorSet = new AnimatorSet();
+            animatorSet.playTogether(animator,animator1);
+            animatorSet.setDuration(200);
+            animatorSet.setInterpolator(new LinearInterpolator());
+            animatorSet.start();
+       }else{
             calculate.setTextSize(TypedValue.COMPLEX_UNIT_SP,50);
-            calculate.setTypeface(light);
+            calculate.setTypeface(MyTextView.light);
             calculate.setTextColor(getResources().getColor(R.color.blac));
-        }
+           answer.setTextSize(TypedValue.COMPLEX_UNIT_SP,40);
+           answer.setTypeface(MyTextView.thin);
+           answer.setTextColor(getResources().getColor(R.color.grey));
+       }
 
     }
 

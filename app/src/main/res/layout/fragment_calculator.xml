@@ -12,31 +12,35 @@
         android:layout_height="0dp"
         android:layout_weight="3.9"
         >
-        <RelativeLayout
+        <ScrollView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true">
-            <TextView
-                android:id="@+id/calculator_calculate"
+            <RelativeLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="50dp"
-                android:layout_marginEnd="15dp"
-                android:layout_alignParentEnd="true"
-                android:fontFamily="sans-serif-light"
-                android:textColor="@color/blac" />
-            <TextView
-                android:id="@+id/calculator_answer"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:textSize="40dp"
-                android:textColor="@color/grey"
-                android:fontFamily="sans-serif-thin"
-                android:layout_marginEnd="15dp"
-                android:layout_below="@id/calculator_calculate" />
-        </RelativeLayout>
+                android:layout_height="wrap_content">
+                <fun.eriri.calculator.UI.MyTextView
+                    android:id="@+id/calculator_calculate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="50dp"
+                    android:layout_marginEnd="15dp"
+                    android:layout_alignParentEnd="true"
+                    android:fontFamily="sans-serif-light"
+                    android:textColor="@color/blac"/>
+                <fun.eriri.calculator.UI.MyTextView
+                    android:id="@+id/calculator_answer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:textSize="40dp"
+                    android:textColor="@color/grey"
+                    android:fontFamily="sans-serif-thin"
+                    android:layout_marginEnd="15dp"
+                    android:layout_below="@id/calculator_calculate" />
+            </RelativeLayout>
+        </ScrollView>
     </RelativeLayout>
     <View
         android:layout_width="match_parent"
@@ -45,18 +49,13 @@
         android:layout_marginStart="5dp"
         android:layout_marginEnd="5dp"/>
 
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:cardBackgroundColor="#ffffff"
-        android:layout_weight="6"
-        >
+
         <GridView
             android:id="@+id/grid"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
             android:numColumns="4"
+            android:layout_weight="6.4"
             />
-    </androidx.cardview.widget.CardView>
 
 </LinearLayout>

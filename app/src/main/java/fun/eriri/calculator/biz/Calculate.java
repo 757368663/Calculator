@@ -1,6 +1,7 @@
 package fun.eriri.calculator.biz;
 
 import android.util.Log;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
